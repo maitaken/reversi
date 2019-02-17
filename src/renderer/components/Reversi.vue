@@ -1,0 +1,48 @@
+<template>
+  <div class="content">
+    <div>
+      現在のプレイヤー : {{1 + othello.order}}
+    </div>
+    <div class="row" v-for="(row,i) in othello.field" :key=i>
+      <div v-for="(cell,j) in row" :key=j>
+        <cell :status=cell />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import Cell from './Reversi/Cell'
+  export default {
+    name: 'othello',
+    methods: {
+      init () {
+        this.$store.dispatch("initGame")
+      }
+    },
+    components:{
+      Cell
+    },
+    computed: {
+      othello:function() {
+        return this.$store.state.Othello
+      }
+    },
+    created(){
+      this.$store.dispatch("initGame")
+    }
+  }
+</script>
+
+<style scoped>
+
+/* *{
+  margin: 0;
+  padding: 0;
+} */
+
+.row{
+  display: flex;
+}
+
+</style>
