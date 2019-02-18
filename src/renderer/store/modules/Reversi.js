@@ -1,4 +1,4 @@
-import { githubUrl } from "builder-util-runtime";
+const WAYS = ['up','down','left','right','left-up','right-up','left-down','right-down']
 
 const state = {
   field:[],
@@ -33,7 +33,7 @@ let nextGrid = (grid,way) => {
       x++;y++;
       break
     default:
-      console.log(way)
+      console.log(111111111111111)
       break
   }
   return [y,x]
@@ -47,7 +47,7 @@ const mutations = {
       for(let j = 0;j < 8;j++){
         row.push({
           'state':"none",
-          'ableFlip':true
+          'ableFlip':false
         })
       }
       field.push(row)
@@ -68,9 +68,6 @@ const mutations = {
     let flipStone = (grid) => {
       let [y,x] = grid
 
-      console.log(grid)
-      console.log(grid.includes(-1,8))
-
       if(grid.includes(-1) || grid.includes(8) || state.field[y][x].state == 'none'){
         return false
       }
@@ -89,28 +86,72 @@ const mutations = {
   },
   PUT_STONE(state,grid) {
     state.field[grid[0]][grid[1]].state = (state.order) ? 'black' : 'white'
+  },
+  SET_ABLE_FLIP(state) {
+    const playerColor = (state.order) ? 'black' : 'white'
+
+    let exitAnotherStone = (grid) => {
+      
+      let wayStoneExists = (grid,way,flag) => {
+        let [y,x] = grid
+
+        if(grid.includes(-1) || grid.includes(8) || state.field[y][x].state == 'none') {
+          return false
+        }
+        else if(flag){
+          if(state.field[y][x].state != playerColor){
+            return wayStoneExists(nextGrid(grid,way),way,flag)
+          }
+          else{
+            return true
+          }
+        }
+        else{
+          if(state.field[y][x].state != playerColor){
+            return wayStoneExists(nextGrid(grid,way),way,true)
+          }
+          else{
+            return false
+          }
+        }
+      }
+
+      for(let way of WAYS){
+        if(wayStoneExists(nextGrid(grid,way),way,false)) {
+          return true
+        }
+      }
+      return false
+    }
+
+    state.field.forEach((row,y)=>{
+      row.forEach((cell,x) =>{
+        if(cell.state != "none") return
+
+        cell.ableFlip = (exitAnotherStone([y,x])) ? true : false
+      })
+    })
   }
 }
 
 const actions = {
   initGame ({ commit }) {
     commit('INIT_GAME')
-  },
-  changePlayer({ commit }) {
-    commit('CHANGE_PLAYER')
+    commit('SET_ABLE_FLIP')
+
   },
   putStone ({ commit }, grid) {
     commit('PUT_STONE',grid)
 
-    for(let way of ['up','down','left','right','left-up','right-up','left-down','right-down']) {
+    for(let way of WAYS) {
       commit({
         'type': 'FLIP_STONE',
         'grid':nextGrid(grid,way),
         'way':way
       })
     }
-
     commit('CHANGE_PLAYER')
+    commit('SET_ABLE_FLIP')
   }
 }
 

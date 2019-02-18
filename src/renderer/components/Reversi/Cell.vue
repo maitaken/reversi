@@ -5,12 +5,12 @@
     <div class="white-cell" v-else-if='status.state == "white"'>
     </div>
     <div 
-      v-else-if='status.ableFlip && order'
+      v-else-if='status.ableFlip && !order'
       class = 'white-cell able-flip'
       @click="putStone"
       ></div>
     <div 
-      v-else-if='status.ableFlip && !order'
+      v-else-if='status.ableFlip && order'
       class = 'black-cell able-flip'
       @click='putStone'
       ></div>
