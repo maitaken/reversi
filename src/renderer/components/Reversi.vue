@@ -1,11 +1,11 @@
 <template>
   <div class="content">
     <div>
-      現在のプレイヤー : {{1 + othello.order}}
+      現在のプレイヤー : {{1 + reversi.order}}
     </div>
-    <div class="row" v-for="(row,i) in othello.field" :key=i>
+    <div class="row" v-for="(row,i) in reversi.field" :key=i>
       <div v-for="(cell,j) in row" :key=j>
-        <cell :status=cell />
+        <cell :status=cell :grid='[i,j]' :order='reversi.order'/>
       </div>
     </div>
   </div>
@@ -14,7 +14,7 @@
 <script>
   import Cell from './Reversi/Cell'
   export default {
-    name: 'othello',
+    name: 'reversi',
     methods: {
       init () {
         this.$store.dispatch("initGame")
@@ -24,11 +24,11 @@
       Cell
     },
     computed: {
-      othello:function() {
-        return this.$store.state.Othello
+      reversi:function() {
+        return this.$store.state.Reversi
       }
     },
-    created(){
+    created() {
       this.$store.dispatch("initGame")
     }
   }

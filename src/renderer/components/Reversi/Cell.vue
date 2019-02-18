@@ -1,18 +1,28 @@
 <template>
-  <div class="cell" @click="clickCell">
+  <div class="cell">
     <div class="black-cell" v-if='status.state == "black"'>
     </div>
     <div class="white-cell" v-else-if='status.state == "white"'>
     </div>
+    <div 
+      v-else-if='status.ableFlip && order'
+      class = 'white-cell able-flip'
+      @click="putStone"
+      ></div>
+    <div 
+      v-else-if='status.ableFlip && !order'
+      class = 'black-cell able-flip'
+      @click='putStone'
+      ></div>
   </div>
 </template>
 
 <script>
 export default {
-  props:["status"],
+  props:["status","grid","order"],
   methods:{
-    clickCell() {
-      this.$store.dispatch('changePlayer')
+    putStone() {
+      this.$store.dispatch('putStone',this.grid)
     }
   }
 }
@@ -36,5 +46,22 @@ export default {
     background-color: #fff;
     height: 100%;
     border-radius: 50%;
+  }
+
+  .able-flip{
+    animation: flashing 1s ease 0s infinite alternate none;
+  }
+
+  .able-flip:hover{
+    background-color: rgb(15, 137, 15);
+  }
+
+  @keyframes flashing{
+    0%{
+      opacity: 0.1;
+    }
+    100%{
+      opacity: 0.3;
+    }
   }
 </style>
