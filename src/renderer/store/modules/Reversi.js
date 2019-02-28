@@ -32,9 +32,6 @@ let nextGrid = (grid,way) => {
     case 'right-down':
       x++;y++;
       break
-    default:
-      console.log(111111111111111)
-      break
   }
   return [y,x]
 }
