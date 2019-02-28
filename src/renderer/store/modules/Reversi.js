@@ -56,7 +56,7 @@ const mutations = {
       field.push(row)
     }
     field[3][3]['state'] = "white"
-    field[4][4]['state'] = "black"
+    field[4][4]['state'] = "white"
     field[3][4]['state'] = "black"
     field[4][3]['state'] = "black"
     
