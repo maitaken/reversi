@@ -8,13 +8,13 @@
         <cell :status=cell :grid='[i,j]' :order='reversi.order'/>
       </div>
     </div>
-    <cuntin />
+    <cutin />
   </div>
 </template>
 
 <script>
   import Cell from './Reversi/Cell'
-  import Cuntin from './Reversi/Cutin'
+  import Cutin from './Reversi/Cutin'
 
   export default {
     name: 'reversi',
@@ -25,7 +25,7 @@
     },
     components:{
       Cell,
-      Cuntin
+      Cutin
     },
     computed: {
       reversi:function() {
