@@ -10,7 +10,7 @@
 export default {
   computed:{
     order:function() {
-      return this.$store.state.Reversi.order
+      return this.$store.state.Reversi.gameInfo.order
     }
   }
 }

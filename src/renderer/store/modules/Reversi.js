@@ -2,7 +2,13 @@ const WAYS = ['up','down','left','right','left-up','right-up','left-down','right
 
 const state = {
   field:[],
-  order:false
+  gameInfo:{
+    blackCount:0,
+    whiteCount:0,
+    order:false,
+    isGameOver:false
+  },
+  putGridExits:true,
 }
 
 let nextGrid = (grid,way) => {
@@ -50,17 +56,19 @@ const mutations = {
       field.push(row)
     }
     field[3][3]['state'] = "white"
-    field[4][4]['state'] = "white"
+    field[4][4]['state'] = "black"
     field[3][4]['state'] = "black"
     field[4][3]['state'] = "black"
     
+    state.gameInfo.isGameOver = false
     state.field = field
   },
   CHANGE_PLAYER (state) {
-    state.order = !state.order
+    state.gameInfo.order = !state.gameInfo.order
+    console.log(state)
   },
   FLIP_STONE (state,{grid,way}) {
-    const playerColor = (state.order) ? 'black' : 'white'
+    const playerColor = (state.gameInfo.order) ? 'black' : 'white'
   
     let flipStone = (grid) => {
       let [y,x] = grid
@@ -82,10 +90,10 @@ const mutations = {
     flipStone(grid)
   },
   PUT_STONE(state,grid) {
-    state.field[grid[0]][grid[1]].state = (state.order) ? 'black' : 'white'
+    state.field[grid[0]][grid[1]].state = (state.gameInfo.order) ? 'black' : 'white'
   },
   SET_ABLE_FLIP(state) {
-    const playerColor = (state.order) ? 'black' : 'white'
+    const playerColor = (state.gameInfo.order) ? 'black' : 'white'
 
     let exitAnotherStone = (grid) => {
       
@@ -121,13 +129,29 @@ const mutations = {
       return false
     }
 
-    state.field.forEach((row,y)=>{
-      row.forEach((cell,x) =>{
-        if(cell.state != "none") return
+    let blackCount = 0,whiteCount = 0
+    state.putGridExits = false
 
-        cell.ableFlip = (exitAnotherStone([y,x])) ? true : false
+    state.field.forEach((row,y)=>{
+      row.forEach((cell,x) => {
+
+        if(cell.state != "none"){
+          if(cell.state == "black") blackCount +=1
+          else whiteCount += 1
+          return
+        }
+
+        let ablePut = exitAnotherStone([y,x])
+        cell.ableFlip = (ablePut) ? true : false
+        if(ablePut) state.putGridExits = true
       })
     })
+
+    state.gameInfo.blackCount = blackCount
+    state.gameInfo.whiteCount = whiteCount
+  },
+  GAMEOVER(state) {
+    state.gameInfo.isGameOver = true
   }
 }
 
@@ -135,9 +159,8 @@ const actions = {
   initGame ({ commit }) {
     commit('INIT_GAME')
     commit('SET_ABLE_FLIP')
-
   },
-  putStone ({ commit }, grid) {
+  putStone ({state, commit }, grid) {
     commit('PUT_STONE',grid)
 
     for(let way of WAYS) {
@@ -149,6 +172,17 @@ const actions = {
     }
     commit('CHANGE_PLAYER')
     commit('SET_ABLE_FLIP')
+
+    console.log(state.putGridExits)
+
+    if(!state.putGridExits) {
+      commit('CHANGE_PLAYER')     
+      commit('SET_ABLE_FLIP')
+    }
+    if(!state.putGridExits) {
+      commit('GAMEOVER')
+    }
+
   }
 }
 

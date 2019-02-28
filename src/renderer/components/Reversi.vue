@@ -1,11 +1,9 @@
 <template>
   <div class="content">
-    <div>
-      現在のプレイヤー : {{1 + reversi.order}}
-    </div>
+    <game-info @init="init" />
     <div class="row" v-for="(row,i) in reversi.field" :key=i>
       <div v-for="(cell,j) in row" :key=j>
-        <cell :status=cell :grid='[i,j]' :order='reversi.order'/>
+        <cell :status=cell :grid='[i,j]' :order='reversi.gameInfo.order'/>
       </div>
     </div>
     <cutin />
@@ -15,6 +13,7 @@
 <script>
   import Cell from './Reversi/Cell'
   import Cutin from './Reversi/Cutin'
+  import GameInfo from './Reversi/GameInfo'
 
   export default {
     name: 'reversi',
@@ -25,7 +24,8 @@
     },
     components:{
       Cell,
-      Cutin
+      Cutin,
+      GameInfo
     },
     computed: {
       reversi:function() {
@@ -33,7 +33,7 @@
       }
     },
     created() {
-      this.$store.dispatch("initGame")
+      this.init()
     }
   }
 </script>
